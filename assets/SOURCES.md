@@ -16,3 +16,18 @@ Globe.gl (https://globe.gl/) was evaluated. A second globe renderer was not adde
 - `real-desert-mirrors.jpg`: NASA, “Sun Glint from Solar Electric Generating Stations,” https://science.nasa.gov/earth/earth-observatory/sun-glint-from-solar-electric-generating-stations-4517 . Terra/MISR, April 8, 2003, Kramer Junction and Harper Lake solar fields in the Mojave Desert. Credit NASA/GSFC/LaRC/JPL, MISR Team. Downloaded as `Solarplant_MISR2004099_lrg.jpg` (680×792, four view-angle panels). The top row (46° forward | 26° forward) was cropped and scaled 2× to 1360×784 so the glint is legible at modal size, then encoded at JPEG quality 88. No colour or contrast adjustment, and the original panel labels are kept. The two panels are the same site seen from two MISR view angles — the mirrors appear white only in the angle where their reflected sunlight reaches the camera. Analogue for desert reflectors, not a photograph of a deployment.
 - `real-foam.jpg`: NASA Earth Observatory, “Lines of Foam on Garabogazköl,” https://science.nasa.gov/earth/earth-observatory/lines-of-foam-on-garabogazkol-90206 . Landsat 8 OLI, April 4, 2017, image by Joshua Stevens using USGS Landsat data. Downloaded as `garabogazkol_oli_2017094_lrg.jpg` (5639×3759); a 1400×1050 region at native resolution was cropped so the foam lines are legible at modal size, then encoded at JPEG quality 85. No colour or contrast adjustment. Per the NASA caption the bright lines are bubbles formed where surfactants lower surface tension and converging currents concentrate the foam — a natural analogue for microbubble brightening, not a deployment.
 - `real-aerosols.jpg`: NASA Earth Observatory, “Astronauts Photograph Mount Pinatubo,” https://science.nasa.gov/earth/earth-observatory/astronauts-photograph-mount-pinatubo/ , paired astronaut photographs STS41D-32-14 (August 30, 1984) and STS043-22-23 (August 8, 1991). The lower photograph shows stratospheric aerosol layers after the eruption. Credit NASA/JSC. This is a natural analogue, not an intentional aerosol deployment.
+매머드 전경: Climeworks, 2023년 12월 건설 중 실사. https://climeworks.com/news/mammoth-taking-final-shape . 저작권: Climeworks. 모형은 실제 시설 배치를 재현하지 않음.
+
+첫 화면 아이콘: Phosphor Icons core 2.1.1, duotone. https://github.com/phosphor-icons/core . MIT, Copyright (c) 2023 Phosphor Icons. 원본 SVG와 LICENSE.txt는 assets/phosphor에 보관. 색상 및 배치는 앱 스타일로 적용.
+
+폰트: Pretendard Variable v1.3.9, https://github.com/orioncactus/pretendard . SIL Open Font License 1.1, assets/fonts/OFL.txt. 웹폰트는 로컬 파일로 제공.
+
+학습 설명 검수 참고 (lesson-content.js):
+- 구름 형성: NASA, How Do Clouds Form? https://science.nasa.gov/kids/earth/how-do-clouds-form/
+- 성층권 입자와 해상 구름: NOAA CSL, https://csl.noaa.gov/news/2024/400_0320.html 및 https://www.gfdl.noaa.gov/aerosols-and-climate/
+- 밝은 지붕: U.S. DOE, Guide to Cool Roofs, https://www.energy.gov/sites/prod/files/guide_to_cool_roofs.pdf
+- 공기에서 CO₂ 포집·저장: Climeworks, https://climeworks.com/carbon-removal-technology
+- 심층수와 영양분: NOAA, https://oceanservice.noaa.gov/facts/upwelling.html
+- 식물 플랑크톤의 광합성: NOAA, https://oceanservice.noaa.gov/facts/plankton.html
+- 철분 살포와 탄소 침강의 한계: WHOI, https://www.whoi.edu/ocean-learning-hub/ocean-topics/climate-weather/ocean-based-climate-solutions/iron-fertilization/
+설명은 중학생 대상의 교육용 요약이며, 인공구름 장면은 구름 형성에 유리한 조건을 가정한다. 강도와 냉각·탄소 저장량 사이의 실제 수치 관계를 예측하지 않는다.

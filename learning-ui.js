@@ -1,0 +1,125 @@
+/* Readable diagram labels, restrained keyword emphasis, and photo observation guides. */
+function setHighlightedText(element,text,keywords){
+ element.replaceChildren();
+ const words=[...new Set(keywords)].sort((a,b)=>b.length-a.length),used=new Set();
+ let start=0;
+ while(start<text.length){
+  let at=-1,word='';
+  for(const key of words){const next=text.indexOf(key,start);if(next>=0&&(at<0||next<at)){at=next;word=key;}}
+  if(at<0){element.append(document.createTextNode(text.slice(start)));break;}
+  element.append(document.createTextNode(text.slice(start,at)));
+  if(used.size<3&&!used.has(word)){const strong=document.createElement('strong');strong.textContent=word;element.append(strong);used.add(word);}
+  else element.append(document.createTextNode(word));
+  start=at+word.length;
+ }
+}
+(()=>{
+const shortNames={
+ '표층에서 자라는 플랑크톤':'식물 플랑크톤',
+ '같은 물의 양을 더 작은 물방울로 나눔':'구름 속 물방울',
+ '땅 위에 세운 분무탑':'분무탑',
+ '물방울이 모여 생긴 구름':'새 구름',
+ '높은 하늘의 에어로졸 입자층':'에어로졸층',
+ '입자를 뿌리는 비행기':'분사 비행기',
+ '이미 있는 해상 구름':'기존 해상 구름',
+ '햇빛을 반사하는 흰 지붕':'흰 지붕',
+ '깊이 가라앉는 탄소':'가라앉는 탄소',
+ '공기에서 잡는 필터':'포집 필터',
+ '깊은 바다의 영양분':'심층수의 영양분'
+};
+const overlaps=(a,b)=>a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;
+Features.layoutDiagramNames=function(){
+ const host=$('diagram-labels'),stage=$('stage'),svg=$('diagram').querySelector('svg');
+ host.replaceChildren();if(!svg)return;
+ const frame=stage.getBoundingClientRect(),w=stage.clientWidth,h=stage.clientHeight,items=[];
+ const add=(name,anchor,bounds)=>{
+  name=shortNames[name]||name;
+  if(!name||name==='CO₂'||name==='탄소'||name.length>24||name.startsWith('거울에'))return;
+  if(items.some(item=>item.name===name))return;
+  items.push({name,anchor,bounds});
+ };
+ svg.querySelectorAll('.diagram-object').forEach(g=>{
+  const box=g.getBBox();if(!box.width&&!box.height)return;
+  const m=g.getScreenCTM();if(!m)return;
+  const point=new DOMPoint(box.x+box.width/2,box.y+box.height/2).matrixTransform(m);
+  const r=g.getBoundingClientRect();
+  add(g.getAttribute('aria-label'),{x:point.x-frame.x,y:point.y-frame.y},{x:r.x-frame.x,y:r.y-frame.y,w:r.width,h:r.height});
+ });
+ svg.querySelectorAll('text').forEach(text=>{
+  const name=text.textContent.trim();
+  if(name==='CO₂'||name==='탄소')return;
+  const m=text.getScreenCTM();if(m){const point=new DOMPoint(Number(text.getAttribute('x')||0),Number(text.getAttribute('y')||0)).matrixTransform(m);add(name,{x:point.x-frame.x,y:point.y-frame.y},null);}
+  text.classList.add('diagram-name');
+ });
+ if(state.id===2)add('사막 지표',{x:w*.75,y:h*.79},null);
+ const ns='http://www.w3.org/2000/svg',leaders=document.createElementNS(ns,'svg');
+ leaders.setAttribute('viewBox','0 0 '+w+' '+h);leaders.classList.add('diagram-leaders');host.append(leaders);
+ const occupied=[];
+ const tool=$('fullscreen').getBoundingClientRect();
+ if(tool.width)occupied.push({x:tool.x-frame.x-6,y:tool.y-frame.y-6,w:tool.width+12,h:tool.height+12});
+ for(const item of items.slice(0,6)){
+  const el=document.createElement('span');el.className='diagram-label';el.textContent=item.name;host.append(el);
+  const lw=el.offsetWidth,lh=el.offsetHeight,a=item.anchor;
+  const bound=item.bounds||{x:a.x,y:a.y,w:0,h:0};
+  const candidates=[
+   [a.x,bound.y-lh/2-10],[a.x,bound.y+bound.h+lh/2+10],
+   [bound.x-lw/2-12,a.y],[bound.x+bound.w+lw/2+12,a.y],
+   [a.x,lh/2+12],[a.x,h-lh/2-12]
+  ];
+  for(let y=lh/2+10;y<h-lh/2-5;y+=Math.max(lh+10,42))for(let x=lw/2+10;x<w-lw/2-5;x+=Math.max(lw+10,90))candidates.push([x,y]);
+  let best=null,score=Infinity;
+  for(let [cx,cy] of candidates){
+   cx=Math.max(lw/2+7,Math.min(w-lw/2-7,cx));cy=Math.max(lh/2+7,Math.min(h-lh/2-7,cy));
+   const r={x:cx-lw/2-3,y:cy-lh/2-3,w:lw+6,h:lh+6};
+   const collisions=occupied.filter(q=>overlaps(q,r)).length;
+   const objectOverlap=items.filter(q=>q.bounds&&overlaps(q.bounds,r)).length;
+   const cost=collisions*100000+objectOverlap*650+Math.hypot(cx-a.x,cy-a.y);
+   if(cost<score){score=cost;best={cx,cy,r};}
+  }
+  if(!best)continue;
+  occupied.push(best.r);el.style.left=best.cx+'px';el.style.top=best.cy+'px';
+  const line=document.createElementNS(ns,'line');line.setAttribute('x1',a.x);line.setAttribute('y1',a.y);line.setAttribute('x2',best.cx);line.setAttribute('y2',best.cy);leaders.append(line);
+ }
+};
+Features.syncHints=function(){
+ const is2d=state.view==='front'||state.id===7,b=$('names-toggle');
+ b.hidden=is2d;b.textContent=state.hints?'이름 숨기기':'이름 보이기';b.setAttribute('aria-pressed',state.hints);
+ $('labels').hidden=is2d||!state.hints;$('stage').classList.remove('hints-off');$('stage').classList.toggle('names-on',is2d||state.hints);
+ $('diagram-labels').hidden=!is2d;
+ if(is2d)this.layoutDiagramNames();else $('diagram-labels').replaceChildren();
+};
+const guides={
+ 0:[{box:[.27,.30,.43,.25],text:'바다 위에 줄지어 있는 작은 구름과 그 사이의 어두운 부분을 비교해 보세요.'}],
+ 1:[{box:[.38,.45,.29,.20],text:'바다의 청록색 소용돌이 무늬가 플랑크톤 번성으로 색이 달라진 부분이에요.'}],
+ 2:[{polygon:[[.04,.69],[.96,.811],[.96,.839],[.04,.718]],text:'아래의 1991년 사진에서 어두운 에어로졸 띠를 찾아 위의 1984년 사진과 비교해 보세요.'}],
+ 3:[{box:[.756,.298,.035,.043],text:'오른쪽 사진의 밝은 지점은 거울에서 반사된 햇빛이 강하게 보이는 부분이에요. 태양열 발전소의 참고 사진이에요.'}],
+ 5:[{box:[.22,.42,.42,.19],text:'건물과 연결된 설비가 모인 매머드 구역을 보세요. 모형은 실제 배치를 그대로 옮긴 것이 아니라 포집·저장 과정을 단순화했어요.'}]
+};
+let activePhoto=null;
+Features.drawPhotoGuide=function(){
+ const image=$('photo-image'),overlay=$('photo-annotations'),list=$('photo-look'),regions=guides[activePhoto]||[];
+ list.replaceChildren(...regions.map(item=>{const li=document.createElement('li');li.textContent=item.text;return li;}));
+ if(!image.naturalWidth||!image.clientWidth)return;
+ const scale=Math.min(image.clientWidth/image.naturalWidth,image.clientHeight/image.naturalHeight);
+ const width=image.naturalWidth*scale,height=image.naturalHeight*scale,left=(image.clientWidth-width)/2,top=(image.clientHeight-height)/2;
+ overlay.style.left=left+'px';overlay.style.top=top+'px';overlay.style.width=width+'px';overlay.style.height=height+'px';overlay.setAttribute('viewBox','0 0 1000 1000');overlay.setAttribute('preserveAspectRatio','none');
+ overlay.replaceChildren();
+ const wrap=image.parentElement;wrap.querySelectorAll('.photo-number').forEach(el=>el.remove());
+ const ns='http://www.w3.org/2000/svg';
+ regions.forEach((item,index)=>{
+  const shape=document.createElementNS(ns,item.polygon?'polygon':'rect');
+  if(item.polygon)shape.setAttribute('points',item.polygon.map(p=>p.map(n=>n*1000).join(',')).join(' '));
+  else{const [x,y,w,h]=item.box;shape.setAttribute('x',x*1000);shape.setAttribute('y',y*1000);shape.setAttribute('width',w*1000);shape.setAttribute('height',h*1000);shape.setAttribute('rx','6');}
+  shape.setAttribute('class','photo-focus');overlay.append(shape);
+  const point=item.polygon?item.polygon[0]:item.box;
+  const number=document.createElement('span');number.className='photo-number';number.textContent=String(index+1);number.setAttribute('aria-hidden','true');number.style.left=(left+point[0]*width)+'px';number.style.top=(top+point[1]*height)+'px';wrap.append(number);
+ });
+};
+const oldShow=Features.showPhoto.bind(Features);
+Features.showPhoto=function(index){activePhoto=index;oldShow(index);this.drawPhotoGuide();};
+const oldInit=Features.init.bind(Features);
+Features.init=function(){
+ oldInit();$('photo-image').addEventListener('load',()=>this.drawPhotoGuide());
+ new ResizeObserver(()=>this.drawPhotoGuide()).observe($('photo-image'));
+};
+})();

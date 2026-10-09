@@ -17,7 +17,27 @@ const height=.15+a*2.35;if(a){for(let i=0;i<5;i++){const panel=box(-.35,(i-2)*he
 for(let i=0;i<7;i++){const y=(i-3)*.32;const hit=a>0&&Math.abs(y-.1)<height/2&&i!==0;path([[-3.42,y,0],[-.35,y,0],hit?[-1.65,y+2.2,-.45]:[1.12,y,0]],0xf0bb43,'light',2);}
 label('태양빛',-3.5,1.05);label(a?'우주 반사경':'반사경 적용 전',-.25,1.8);label('지구',2.6,2.05);if(a)label('우주로 반사',-1.8,3.15,-.45);
 },
- desert(a){this.ground(0xc8a477);for(let k=0;k<5;k++){const dune=mesh(new THREE.SphereGeometry(1.1,24,12),0xd8b889,-3.4+k*1.6,-1.62,-1.55);dune.scale.set(1,.18,.5);}for(let row=0;row<3;row++)for(let col=0;col<5;col++){const i=row*5+col,x=-3.3+col*1.65,z=-1.25+row*1.22; cylinder(x,-1.37,z,.045,.45,0x6c726b);if(i<Math.round(a*15)){const m=box(x,-1.13,z,1.25,.055,.83,0xc8e6ec);m.rotation.x=.15;m.rotation.z=-.18;m.material.metalness=.65;m.material.roughness=.2;this.edge(m);}}for(let i=0;i<5;i++){const x=-3.3+i*1.65;path([[x-.5,2.7,1.2],[x,-1.04,1.2],i+10<Math.round(a*15)?[x+.55,2.8,1.2]:[x,-1.55,1.2]],0xe5ae31);}label('반사판 배열',0,-.1,.8);label('사막 지표',3,-1.4,2);},
+ desert(a){
+ this.ground(0xc8a477);
+ for(let k=0;k<5;k++){const dune=mesh(new THREE.SphereGeometry(1.1,24,12),0xd8b889,-3.4+k*1.6,-1.68,-2);dune.scale.set(1,.12,.22);}
+ const count=Math.round(a*15);
+ for(let row=0;row<3;row++)for(let col=0;col<5;col++){
+  const i=row*5+col,x=-3.3+col*1.65,z=-1.25+row*1.22;
+  cylinder(x,-1.37,z,.045,.45,0x6c726b);
+  const start=V(x-.5,2.7,z);
+  let hit=V(x,-1.575,z),end=null;
+  if(i<count){
+   const panel=box(x,-1.13,z,1.25,.055,.83,0xc8e6ec);panel.rotation.x=.15;panel.rotation.z=-.18;panel.material.metalness=.65;panel.material.roughness=.2;panel.userData.desertPanel=i;this.edge(panel,0x345b6d);
+   const normal=V(0,1,0).applyQuaternion(panel.quaternion);
+   hit=panel.position.clone().addScaledVector(normal,.055/2);
+   const reflected=hit.clone().sub(start).normalize().reflect(normal);
+   end=hit.clone().addScaledVector(reflected,4.2);
+   path([start.toArray(),hit.toArray(),end.toArray()],0xe5ae31,'light',2);
+  }else path([start.toArray(),hit.toArray()],0xe5ae31,'light',1);
+  const flow=paths[paths.length-1];flow.targetIndex=i;flow.reflected=i<count;flow.hit=hit.clone();
+ }
+ label('사막 반사판',0,-.1,.8);label('사막 지표',3,-1.4,2);
+ },
  city(a){this.ground(0xa3b5a2);box(0,-1.56,0,8.9,.03,.48,0x63777b);for(let x=-4;x<4;x+=.5)box(x,-1.53,0,.22,.01,.025,0xe7dfb9);for(let i=0;i<8;i++){const x=-3.1+(i%4)*2.05,z=i<4?1.2:-1.25,h=.85+(i%3)*.38;const base=box(x,-1.52+h/2,z,1.25,h,1,0xe9e0cb);this.edge(base);const roof=box(x,-1.49+h,z,1.4,.13,1.15,i<Math.round(a*8)?0xf6fbf8:0x455565);this.edge(roof);box(x+.26,-1.35+h,z,.3,.2,.3,0xb7c5c5);for(let row=0;row<2;row++)for(let col=0;col<3;col++){box(x-.42+col*.4,-1.28+row*.35,z+.51,.18,.2,.02,0x6994a3);box(x+.635,-1.28+row*.35,z-.25+col*.25,.02,.2,.13,0x6994a3);}/* 앞줄·뒷줄 모든 건물에 햇빛이 닿는다 */path([[x-.35,3.3,z],[x,-1.4+h,z],i<Math.round(a*8)?[x+.6,3,z]:[x,-1.5+h,z]],0xe5ae31);}for(let i=0;i<5;i++)this.tree(-4.05+i*2,2.02);label('지붕 색을 바꾸면?',0,2.3,1.2);label('빛을 더 반사하는 흰 지붕',-2.1,.6,1.7);label('도로와 건물',3.1,-1.25,2);},
  /* 잎: 납작한 타원체. dir 방향(수평각)으로 뻗고 tilt 만큼 위로 들린다 */
  dacLeaf(geo,x,y,z,dir,active,leaves){const tilt=.4,leaf=mesh(geo,active?0x2f9f8a:0xaab6a9,x,y,z);leaf.scale.set(1,.17,.62);leaf.rotation.set(0,-dir,tilt);leaf.userData.tilt=tilt;leaves.push(leaf);return leaf;},

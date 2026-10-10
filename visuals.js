@@ -27,7 +27,7 @@ label('태양빛',-3.5,1.05);label(a?'우주 반사경':'반사경 적용 전',-
   const start=V(x-.5,2.7,z);
   let hit=V(x,-1.575,z),end=null;
   if(i<count){
-   const panel=box(x,-1.13,z,1.25,.055,.83,0xc8e6ec);panel.rotation.x=.15;panel.rotation.z=-.18;panel.material.metalness=.65;panel.material.roughness=.2;panel.userData.desertPanel=i;this.edge(panel,0x345b6d);
+   const panel=box(x,-1.13,z,1.25,.055,.83,0xc8e6ec);panel.rotation.x=.15;panel.rotation.z=-.18;panel.material.dispose();panel.material=new THREE.MeshPhongMaterial({color:0xf3f6f8,specular:0xffffff,shininess:90,emissive:0x77838b,emissiveIntensity:.26,side:THREE.DoubleSide});panel.castShadow=false;panel.userData.desertPanel=i;this.edge(panel,0x9caeb9);
    const normal=V(0,1,0).applyQuaternion(panel.quaternion);
    hit=panel.position.clone().addScaledVector(normal,.055/2);
    const reflected=hit.clone().sub(start).normalize().reflect(normal);

@@ -57,6 +57,7 @@ Features.layoutDiagramNames=function(){
  const occupied=[];
  const tool=$('fullscreen').getBoundingClientRect();
  if(tool.width)occupied.push({x:tool.x-frame.x-6,y:tool.y-frame.y-6,w:tool.width+12,h:tool.height+12});
+ if(!$('inset').hidden){const r=$('inset').getBoundingClientRect();occupied.push({x:r.x-frame.x-8,y:r.y-frame.y-8,w:r.width+16,h:r.height+16});}
  for(const item of items.slice(0,6)){
   const el=document.createElement('span');el.className='diagram-label';el.textContent=item.name;host.append(el);
   const lw=el.offsetWidth,lh=el.offsetHeight,a=item.anchor;

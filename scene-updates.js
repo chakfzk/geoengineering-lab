@@ -43,7 +43,7 @@ LabVisuals.build=function(id,a){if(id===1){this.aerosols(a);return true;}return 
 const enhance=LabVisuals.enhance.bind(LabVisuals);
 LabVisuals.enhance=function(id,a){
  enhance(id,a);
- if(id!==10)return;
+ if(id!==10)return;scene.background=new THREE.Color(0xf0f0e8);root.children.filter(m=>m.isMesh&&m.geometry.type==='BoxGeometry'&&Math.abs(m.position.y-.15)<.02).forEach(m=>{m.material.transparent=true;m.material.opacity=.1;m.material.depthWrite=false;});
  if(!this.bloomTexture){
   const canvas=document.createElement('canvas');canvas.width=512;canvas.height=256;const ctx=canvas.getContext('2d');
   for(let i=0;i<150;i++){
@@ -51,7 +51,7 @@ LabVisuals.enhance=function(id,a){
    const x=256+Math.cos(angle)*radius*215+Math.sin(i*1.8)*12,y=128+Math.sin(angle)*radius*100;
    const size=16+12*(.5+.5*Math.sin(i*2.1));
    const g=ctx.createRadialGradient(x,y,0,x,y,size);
-   g.addColorStop(0,'rgba(207,249,237,.95)');g.addColorStop(.55,'rgba(123,225,199,.85)');g.addColorStop(1,'rgba(91,180,169,0)');
+   g.addColorStop(0,'rgba(207,249,237,.95)');g.addColorStop(.55,'rgba(84,199,192,.85)');g.addColorStop(1,'rgba(91,180,169,0)');
    ctx.fillStyle=g;ctx.beginPath();ctx.ellipse(x,y,size,size*.6,Math.sin(i)*.8,0,Math.PI*2);ctx.fill();
   }
   this.bloomTexture=new THREE.CanvasTexture(canvas);this.bloomTexture.colorSpace=THREE.SRGBColorSpace;this.bloomTexture.userData.shared=true;
@@ -62,9 +62,9 @@ LabVisuals.enhance=function(id,a){
  dynamic.push(time=>{surface.rotation.z=Math.sin(time*.12)*.015;});
 };
 const init=Features.init.bind(Features);
-Features.init=function(){init();this.photos[0]={name:'구름이 많은 바다와 구름 사이의 바다 비교',image:'assets/real-cloud-comparison.jpg',description:'같은 위성 사진에서 구름이 많은 밝은 부분과 구름 사이의 어두운 바다를 비교해 보세요. 긴 구름 줄은 선박 배출 입자의 영향을 받은 관측 사례이며, 해상 구름 밝히기 실험의 전후 사진은 아닙니다.',credit:'NASA Earth Observatory · Terra/MODIS, 2008년 7월 13일',url:'https://science.nasa.gov/earth/earth-observatory/ship-tracks-in-the-northern-pacific-20248/'};};
+Features.init=function(){init();this.photos[0]={name:'구름이 많은 바다와 구름 사이의 바다 비교',image:'assets/real-cloud-comparison.jpg',description:'같은 위성 사진에서 구름이 많은 밝은 부분과 구름 사이의 어두운 바다를 비교해 보세요. 긴 구름 줄은 선박 배출 입자의 영향을 받은 관측 사례이며, 해상 구름 밝히기 실험의 전후 사진은 아닙니다.',credit:'NASA Earth Observatory · Terra/MODIS, 2008년 7월 13일',url:'https://science.nasa.gov/earth/earth-observatory/ship-tracks-in-the-northern-pacific-20248/'};new ResizeObserver(()=>{if(state.id===4&&state.view==='front'&&!document.getElementById('inset').hidden)this.layoutDiagramNames();}).observe(document.getElementById('inset'));};
 const overlay=Features.overlay.bind(Features);
-Features.overlay=function(){overlay();$('inset').hidden=state.id!==4||state.view!=='front';};
+Features.overlay=function(){overlay();$('inset').hidden=state.id!==4||state.view!=='front';if(state.id===4&&state.view==='front')this.layoutDiagramNames();};
 const diagram=Features.diagram.bind(Features);
 Features.diagram=function(){
  if(![1,8,10].includes(state.id)){diagram();return;}
@@ -93,14 +93,13 @@ Features.diagram=function(){
   content+='<path d="'+pipe+'" stroke="#648c9b" stroke-width="13" fill="none" stroke-linejoin="round"/>';
   content+=flow('M'+(w*.05)+' 235 H'+x0)+flow('M'+x0+' 235 H'+(x0+unit*.4)+' V305');
   if(a)content+=flow(pipe);
-  content+=flow('M'+(w*.12)+' 120 Q'+(w*.4)+' 55 '+(w*.67)+' 130');
+  content+=flow('M'+(x0+unit*.4)+' 235 V115 H'+(w*.93));content+=text(w*.75,92,'포집되지 않은 CO₂',w*.90,115);
   content+='<ellipse cx="'+storage+'" cy="475" rx="'+(13+a*20)+'" ry="'+(9+a*10)+'" fill="#ac88c4"/>';
   content+=text(w*.12,277,'공기 속 CO₂')+text(w*.41,163,'포집 장치')+text(collect,185,'모은 CO₂')+text(storage,435,'지하 저장');
  }else{
-  content+=r(0,270,w,200,'#a7d5dc')+r(0,470,w,50,'#719c88');
+  content+=r(0,270,w,200,'#e2e9e9')+r(0,470,w,50,'#719c88');
   const grow=.12+a*.78;
-  for(let i=0;i<8+Math.round(a*25);i++){const x=w*(.18+(i%11)*.065*grow),y=281+Math.floor(i/11)*10;content+='<ellipse cx="'+x+'" cy="'+y+'" rx="'+(10+18*a)+'" ry="5" fill="#b4e9dc" opacity="'+(.3+a*.4)+'"/>';}
-  for(let i=0;i<4+Math.round(a*10);i++)content+='<circle cx="'+(w*.38+i%7*13)+'" cy="'+(300+Math.floor(i/7)*12)+'" r="4" fill="#599c74"/>';
+  for(let i=0;i<8+Math.round(a*25);i++){const x=w*(.18+(i%11)*.065*grow),y=281+Math.floor(i/11)*10;content+='<ellipse cx="'+x+'" cy="'+y+'" rx="'+(10+18*a)+'" ry="5" fill="#80d8cf" opacity="'+(.3+a*.4)+'"/>';}
   if(state.mode==='iron'){
    content+='<path d="M'+w*.08+' 252 l20 18 h65 l16-18Z" fill="#5e7f8c"/>'+r(w*.14,230,35,23,'#f4f5ed');
    if(a)for(let i=0;i<7;i++)content+='<circle cx="'+(w*.28+i*4)+'" cy="'+(255+i*5)+'" r="2.5" fill="#b29453"/>';

@@ -147,3 +147,5 @@ html[lang="ko"]{word-break:keep-all;overflow-wrap:normal;line-break:auto}
  #stage #inset{left:8px;right:auto;top:auto;bottom:8px}
  #stage:has(#inset:not([hidden])) #cloud-context{max-width:calc(100% - 16px)}
 }
+
+.diagram-leaders line{stroke:#365d65;stroke-width:1.5;opacity:.85}.diagram-leaders circle{fill:#365d65;stroke:#fff;stroke-width:1}

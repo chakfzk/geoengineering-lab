@@ -38,27 +38,37 @@ Features.layoutDiagramNames=function(){
   if(items.some(item=>item.name===name))return;
   items.push({name,anchor,bounds});
  };
- svg.querySelectorAll('.diagram-object').forEach(g=>{
-  const box=g.getBBox();if(!box.width&&!box.height)return;
-  const m=g.getScreenCTM();if(!m)return;
-  const point=new DOMPoint(box.x+box.width/2,box.y+box.height/2).matrixTransform(m);
-  const r=g.getBoundingClientRect();
-  add(g.getAttribute('aria-label'),{x:point.x-frame.x,y:point.y-frame.y},{x:r.x-frame.x,y:r.y-frame.y,w:r.width,h:r.height});
- });
- svg.querySelectorAll('text').forEach(text=>{
-  const name=text.textContent.trim();
-  if(name==='CO₂'||name==='탄소')return;
-  const m=text.getScreenCTM();if(m){const point=new DOMPoint(Number(text.dataset.anchorX||text.getAttribute('x')||0),Number(text.dataset.anchorY||text.getAttribute('y')||0)).matrixTransform(m);add(name,{x:point.x-frame.x,y:point.y-frame.y},null);}
-  text.classList.add('diagram-name');
- });
- if(state.id===2)add('사막 지표',{x:w*.75,y:h*.79},null);
+ // Explicit element anchors: never use a label's former text position as its target.
+ const narrow=stage.clientWidth<600,W=narrow?440:800;
+ const definitions={
+  0:[['태양',90,260],['지구',660,260],...(state.compare||state.strength===0?[]:[['우주 반사경',358,265]])],
+  1:[['대류권',W*.84,400],['성층권',W*.84,125],['살포 비행기',W*.22,197],...(state.compare||state.strength===0?[]:[['에어로졸 입자층',W*.57,225]])],
+  2:[['사막 지표',710,405],...(state.compare||state.strength===0?[]:[['사막 반사판',183,339]])],
+  3:[['분무탑',150,260],...(state.compare||state.strength===0?[]:[['새 구름',415,180]])],
+  4:[['분무선',145,280],['기존 해상 구름',415,180]],
+  6:[['흰 지붕',255,295],['어두운 지붕',515,295]],
+  8:[['공기 속 CO₂',W*.13,235],['포집 장치',W*.28+W*.09*.39,245],['모은 CO₂',W*.69,225],['지하 저장',W*.75,475],['포집되지 않은 CO₂',W*.8,115]],
+  10:[...(state.mode==='iron'?[['철분 공급선',W*.19,255]]:[['심층수 펌프',W*.17+7,345],['심층수의 영양분',W*.14,452]]),['식물 플랑크톤',W*.45,307],['사체·배설물의 응집',W*.56,376],['일부 유기물 입자의 침강',W*.59,422],['다시 순환하는 탄소',W*.8,334]]
+ };
+ if(state.id===6){const a=(state.compare?0:state.strength)/100,n=Math.round(a*5);definitions[6]=[];if(n)definitions[6].push(['흰 지붕',255,295]);if(n<5)definitions[6].push(['어두운 지붕',255+n*65,295]);}
+ svg.querySelectorAll('text').forEach(text=>{if(!['CO₂','탄소'].includes(text.textContent.trim()))text.classList.add('diagram-name');});
+ const targets=definitions[state.id];
+ if(targets){
+  let matrix=svg.getScreenCTM();
+  // Legacy diagrams scale their children on narrow screens, custom diagrams change viewBox.
+  if(narrow&&![1,8,10].includes(state.id)){const child=[...svg.children].find(e=>e.hasAttribute('transform'));if(child)matrix=child.getScreenCTM();}
+  const sizes={'태양':[86,86],'지구':[120,120],'우주 반사경':[20,Math.max(10,state.strength*1.4)],'살포 비행기':[80,40],'에어로졸 입자층':[W*.34,50],'사막 반사판':[46,8],'분무탑':[60,150],'새 구름':[160,95],'기존 해상 구름':[180,105],'분무선':[110,55],'흰 지붕':[60,10],'어두운 지붕':[60,10],'포집 장치':[W*.09*.78,120],'모은 CO₂':[44,65],'지하 저장':[65,32],'심층수 펌프':[15,150],'사체·배설물의 응집':[18,16]};
+  for(const [name,x,y] of targets){const point=new DOMPoint(x,y).matrixTransform(matrix),size=sizes[name];let bounds=null;if(size){const tl=new DOMPoint(x-size[0]/2,y-size[1]/2).matrixTransform(matrix),br=new DOMPoint(x+size[0]/2,y+size[1]/2).matrixTransform(matrix);bounds={x:tl.x-frame.x-stage.clientLeft,y:tl.y-frame.y-stage.clientTop,w:br.x-tl.x,h:br.y-tl.y};}add(name,{x:point.x-frame.x-stage.clientLeft,y:point.y-frame.y-stage.clientTop},bounds);}
+ }else{
+  svg.querySelectorAll('.diagram-object').forEach(g=>{const box=g.getBBox(),m=g.getScreenCTM();if(!m||!box.width&&!box.height)return;const point=new DOMPoint(box.x+box.width/2,box.y+box.height/2).matrixTransform(m);add(g.getAttribute('aria-label'),{x:point.x-frame.x,y:point.y-frame.y},null);});
+ }
  const ns='http://www.w3.org/2000/svg',leaders=document.createElementNS(ns,'svg');
  leaders.setAttribute('viewBox','0 0 '+w+' '+h);leaders.classList.add('diagram-leaders');host.append(leaders);
  const occupied=[];
  const tool=$('fullscreen').getBoundingClientRect();
  if(tool.width)occupied.push({x:tool.x-frame.x-6,y:tool.y-frame.y-6,w:tool.width+12,h:tool.height+12});
  if(!$('inset').hidden){const r=$('inset').getBoundingClientRect();occupied.push({x:r.x-frame.x-8,y:r.y-frame.y-8,w:r.width+16,h:r.height+16});}
- for(const item of items.slice(0,6)){
+ for(const item of items){
   const el=document.createElement('span');el.className='diagram-label';el.textContent=item.name;host.append(el);
   const lw=el.offsetWidth,lh=el.offsetHeight,a=item.anchor;
   const bound=item.bounds||{x:a.x,y:a.y,w:0,h:0};
@@ -79,7 +89,11 @@ Features.layoutDiagramNames=function(){
   }
   if(!best)continue;
   occupied.push(best.r);el.style.left=best.cx+'px';el.style.top=best.cy+'px';
-  const line=document.createElementNS(ns,'line');line.setAttribute('x1',a.x);line.setAttribute('y1',a.y);line.setAttribute('x2',best.cx);line.setAttribute('y2',best.cy);if(item.name!=='철분 공급'&&item.name!=='철분 공급선')leaders.append(line);
+  const dx=a.x-best.cx,dy=a.y-best.cy;
+  const scale=Math.min(dx?lw/2/Math.abs(dx):Infinity,dy?lh/2/Math.abs(dy):Infinity,1);
+  const line=document.createElementNS(ns,'line');line.setAttribute('x1',a.x);line.setAttribute('y1',a.y);line.setAttribute('x2',best.cx+dx*scale);line.setAttribute('y2',best.cy+dy*scale);line.dataset.target=item.name;leaders.append(line);
+  const dot=document.createElementNS(ns,'circle');dot.setAttribute('cx',a.x);dot.setAttribute('cy',a.y);dot.setAttribute('r','3');dot.dataset.target=item.name;leaders.append(dot);
+  el.dataset.targetX=a.x;el.dataset.targetY=a.y;
  }
 };
 Features.syncHints=function(){

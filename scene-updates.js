@@ -6,15 +6,15 @@ LabVisuals.earth=function(a){
  planet.material=new THREE.MeshPhongMaterial({map:this.texture('day'),normalMap:this.texture('normal'),normalScale:new THREE.Vector2(.6,.6),specularMap:this.texture('specular'),specular:new THREE.Color(0x466b8f),shininess:16});
  dynamic.push(t=>planet.rotation.y=-1.8+t*.025);
  const halo=ball(2.5,.1,0,1.54,0x579bd2);halo.material.transparent=true;halo.material.opacity=.1;halo.material.side=THREE.BackSide;halo.castShadow=false;halo.receiveShadow=false;
- const sun=ball(-300,-180,-1300,163.5,0xffbc52);sun.material.emissive.set(0xffad39);sun.material.emissiveIntensity=1.2;sun.castShadow=false;sun.receiveShadow=false;sun.userData.labelName='태양 (먼 거리)';
- label('태양 (먼 거리)',-300,-180,-1300);
+ const sunCenter=V(-6.2,.1,0),sunRadius=2.15;const sun=ball(sunCenter.x,sunCenter.y,sunCenter.z,sunRadius,0xffbc52);sun.material.emissive.set(0xffad39);sun.material.emissiveIntensity=1.2;sun.castShadow=false;sun.receiveShadow=false;sun.userData.labelName='태양';sun.userData.sunSource=true;
+ label('태양',sunCenter.x,2.55,0);
  const angle=-20*Math.PI/180,height=.15+a*2.35,center=V(-.35,.1,0),normal=V(-Math.cos(angle),-Math.sin(angle),0);
  let mirror=null;
  if(a){
   mirror=box(center.x,center.y,0,.08,height,1.55,0x90c8e6);mirror.rotation.z=angle;mirror.material.metalness=.7;this.edge(mirror,0xcceafa);mirror.userData.mirror=true;
  }
  for(let i=0;i<7;i++){
-  const y=(i-3)*.42,start=V(-4.55,y,0),x=center.x+(.04-(y-center.y)*normal.y)/normal.x,hit=V(x,y,0);
+  const y=(i-3)*.42,start=V(sunCenter.x+Math.sqrt(sunRadius*sunRadius-(y-sunCenter.y)*(y-sunCenter.y)),y,0),x=center.x+(.04-(y-center.y)*normal.y)/normal.x,hit=V(x,y,0);
   const local=hit.clone().sub(center).applyAxisAngle(V(0,0,1),-angle);
   const reflects=a>0&&Math.abs(local.y)<=height/2;
   const incoming=V(1,0,0),outgoing=incoming.clone().reflect(normal);

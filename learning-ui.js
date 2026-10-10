@@ -58,7 +58,9 @@ Features.layoutDiagramNames=function(){
   // Legacy diagrams scale their children on narrow screens, custom diagrams change viewBox.
   if(narrow&&![1,8,10].includes(state.id)){const child=[...svg.children].find(e=>e.hasAttribute('transform'));if(child)matrix=child.getScreenCTM();}
   const sizes={'태양':[86,86],'지구':[120,120],'우주 반사경':[20,Math.max(10,state.strength*1.4)],'살포 비행기':[80,40],'에어로졸 입자층':[W*.34,50],'사막 반사판':[46,8],'분무탑':[60,150],'새 구름':[160,95],'기존 해상 구름':[180,105],'분무선':[110,55],'흰 지붕':[60,10],'어두운 지붕':[60,10],'포집 장치':[W*.09*.78,120],'CO₂를 물에 녹이기':[44,95],'암석 속 광물로 고정':[65,32],'심층수 펌프':[15,150],'유기물(탄소 포함)':[18,16]};
-  for(const [name,x,y] of targets){const point=new DOMPoint(x,y).matrixTransform(matrix),size=sizes[name];let bounds=null;if(size){const tl=new DOMPoint(x-size[0]/2,y-size[1]/2).matrixTransform(matrix),br=new DOMPoint(x+size[0]/2,y+size[1]/2).matrixTransform(matrix);bounds={x:tl.x-frame.x-stage.clientLeft,y:tl.y-frame.y-stage.clientTop,w:br.x-tl.x,h:br.y-tl.y};}add(name,{x:point.x-frame.x-stage.clientLeft,y:point.y-frame.y-stage.clientTop},bounds);}
+  for(const [name,x,y] of targets){const point=new DOMPoint(x,y).matrixTransform(matrix),size=sizes[name];let bounds=null;if(size){const tl=new DOMPoint(x-size[0]/2,y-size[1]/2).matrixTransform(matrix),br=new DOMPoint(x+size[0]/2,y+size[1]/2).matrixTransform(matrix);bounds={x:tl.x-frame.x-stage.clientLeft,y:tl.y-frame.y-stage.clientTop,w:br.x-tl.x,h:br.y-tl.y};}add(name,{x:point.x-frame.x-stage.clientLeft,y:point.y-frame.y-stage.clientTop},bounds);
+   const preferred=state.id===0&&name==='우주 반사경'?[358,390]:state.id===10&&name==='유기물(탄소 포함)'?[W*.32,388]:state.id===10&&name==='일부 유기물의 침강'?[W*.81,430]:null;
+   if(preferred){const q=new DOMPoint(...preferred).matrixTransform(matrix);items.at(-1).preferred={x:q.x-frame.x-stage.clientLeft,y:q.y-frame.y-stage.clientTop};}}
  }else{
   svg.querySelectorAll('.diagram-object').forEach(g=>{const box=g.getBBox(),m=g.getScreenCTM();if(!m||!box.width&&!box.height)return;const point=new DOMPoint(box.x+box.width/2,box.y+box.height/2).matrixTransform(m);add(g.getAttribute('aria-label'),{x:point.x-frame.x,y:point.y-frame.y},null);});
  }
@@ -78,6 +80,7 @@ Features.layoutDiagramNames=function(){
    [bound.x-lw/2-12,a.y],[bound.x+bound.w+lw/2+12,a.y],
    [a.x,lh/2+12],[a.x,h-lh/2-12]
   ];
+  if(item.preferred)candidates.unshift([item.preferred.x,item.preferred.y]);
   for(let y=lh/2+10;y<h-lh/2-5;y+=12)for(let x=lw/2+10;x<w-lw/2-5;x+=14)candidates.push([x,y]);
   let best=null,score=Infinity;
   for(let [cx,cy] of candidates){
@@ -86,7 +89,8 @@ Features.layoutDiagramNames=function(){
    const collisions=occupied.filter(q=>overlaps(q,r)).length;
    const objectOverlap=items.filter(q=>q.bounds&&overlaps(q.bounds,r)).length+objectRegions.filter(q=>overlaps(q,r)).length;
    if(collisions||objectOverlap)continue;
-   const cost=Math.hypot(cx-a.x,cy-a.y);
+   const desired=item.preferred||a;
+   const cost=Math.hypot(cx-desired.x,cy-desired.y);
    if(cost<score){score=cost;best={cx,cy,r};}
   }
   if(!best){el.remove();continue;}

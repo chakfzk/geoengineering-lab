@@ -22,7 +22,7 @@ LabVisuals.earth=function(a){
   path(reflects?[start.toArray(),hit.toArray(),endpoint.toArray()]:[start.toArray(),endpoint.toArray()],0xf0bb43,'light',2);
   Object.assign(paths.at(-1),{reflected:reflects,incoming,normal:normal.clone(),outgoing,hit});
  }
- label('들어오는 태양빛',-3.45,1.75);label(a?'우주 반사경':'반사경 적용 전',-.25,1.75);label('지구',2.6,2.05);if(a)label('반사된 태양빛',-1.65,2.85);
+ label('들어오는 태양빛',-3.45,1.75);label(a?'우주 반사경':'반사경 적용 전',-.35,-1.75);label('지구',2.6,2.05);if(a)label('반사된 태양빛',-1.65,2.85);
 };
 LabVisuals.aerosols=function(a){
  this.ground(0x94b28b);

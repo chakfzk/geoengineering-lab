@@ -24,7 +24,7 @@ const shortNames={
  '이미 있는 해상 구름':'기존 해상 구름',
  '햇빛을 반사하는 흰 지붕':'흰 지붕',
  '깊이 가라앉는 탄소':'가라앉는 탄소',
- '공기에서 잡는 필터':'포집 필터',
+ '공기에서 잡는 필터':'포집 장치',
  '깊은 바다의 영양분':'심층수의 영양분'
 };
 const overlaps=(a,b)=>a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;
@@ -48,7 +48,7 @@ Features.layoutDiagramNames=function(){
  svg.querySelectorAll('text').forEach(text=>{
   const name=text.textContent.trim();
   if(name==='CO₂'||name==='탄소')return;
-  const m=text.getScreenCTM();if(m){const point=new DOMPoint(Number(text.getAttribute('x')||0),Number(text.getAttribute('y')||0)).matrixTransform(m);add(name,{x:point.x-frame.x,y:point.y-frame.y},null);}
+  const m=text.getScreenCTM();if(m){const point=new DOMPoint(Number(text.dataset.anchorX||text.getAttribute('x')||0),Number(text.dataset.anchorY||text.getAttribute('y')||0)).matrixTransform(m);add(name,{x:point.x-frame.x,y:point.y-frame.y},null);}
   text.classList.add('diagram-name');
  });
  if(state.id===2)add('사막 지표',{x:w*.75,y:h*.79},null);
@@ -78,7 +78,7 @@ Features.layoutDiagramNames=function(){
   }
   if(!best)continue;
   occupied.push(best.r);el.style.left=best.cx+'px';el.style.top=best.cy+'px';
-  const line=document.createElementNS(ns,'line');line.setAttribute('x1',a.x);line.setAttribute('y1',a.y);line.setAttribute('x2',best.cx);line.setAttribute('y2',best.cy);leaders.append(line);
+  const line=document.createElementNS(ns,'line');line.setAttribute('x1',a.x);line.setAttribute('y1',a.y);line.setAttribute('x2',best.cx);line.setAttribute('y2',best.cy);if(item.name!=='철분 공급'&&item.name!=='철분 공급선')leaders.append(line);
  }
 };
 Features.syncHints=function(){
@@ -89,10 +89,10 @@ Features.syncHints=function(){
  if(is2d)this.layoutDiagramNames();else $('diagram-labels').replaceChildren();
 };
 const guides={
- 0:[{box:[.27,.30,.43,.25],text:'바다 위에 줄지어 있는 작은 구름과 그 사이의 어두운 부분을 비교해 보세요.'}],
+ 0:[{box:[.72,.10,.14,.24],text:'밝은 부분: 구름이 많아 햇빛을 반사하는 영역이에요.'},{box:[.46,.33,.16,.14],text:'어두운 부분: 구름 사이로 바다가 보이는 영역이에요. 같은 사진 안의 공간 비교이며 실험 전후 비교는 아니에요.'}],
  1:[{box:[.38,.45,.29,.20],text:'바다의 청록색 소용돌이 무늬가 플랑크톤 번성으로 색이 달라진 부분이에요.'}],
- 2:[{polygon:[[.04,.69],[.96,.811],[.96,.839],[.04,.718]],text:'아래의 1991년 사진에서 어두운 에어로졸 띠를 찾아 위의 1984년 사진과 비교해 보세요.'}],
- 3:[{box:[.756,.298,.035,.043],text:'오른쪽 사진의 밝은 지점은 거울에서 반사된 햇빛이 강하게 보이는 부분이에요. 태양열 발전소의 참고 사진이에요.'}],
+ 2:[{box:[.015,.655,.97,.22],text:'아래의 1991년 사진에서 어두운 에어로졸 띠를 찾아 위의 1984년 사진과 비교해 보세요.'}],
+ 3:[{ellipse:[.774,.32,.035,.046],text:'오른쪽 사진의 밝은 지점은 거울에서 반사된 햇빛이 강하게 보이는 부분이에요. 태양열 발전소의 참고 사진이에요.'}],
  5:[{box:[.22,.42,.42,.19],text:'건물과 연결된 설비가 모인 매머드 구역을 보세요. 모형은 실제 배치를 그대로 옮긴 것이 아니라 포집·저장 과정을 단순화했어요.'}]
 };
 let activePhoto=null;
@@ -107,12 +107,11 @@ Features.drawPhotoGuide=function(){
  const wrap=image.parentElement;wrap.querySelectorAll('.photo-number').forEach(el=>el.remove());
  const ns='http://www.w3.org/2000/svg';
  regions.forEach((item,index)=>{
-  const shape=document.createElementNS(ns,item.polygon?'polygon':'rect');
-  if(item.polygon)shape.setAttribute('points',item.polygon.map(p=>p.map(n=>n*1000).join(',')).join(' '));
+  const shape=document.createElementNS(ns,item.ellipse?'ellipse':item.polygon?'polygon':'rect');
+  if(item.ellipse){const [x,y,rx,ry]=item.ellipse;shape.setAttribute('cx',x*1000);shape.setAttribute('cy',y*1000);shape.setAttribute('rx',rx*1000);shape.setAttribute('ry',rx*width/height*1000);}else if(item.polygon)shape.setAttribute('points',item.polygon.map(p=>p.map(n=>n*1000).join(',')).join(' '));
   else{const [x,y,w,h]=item.box;shape.setAttribute('x',x*1000);shape.setAttribute('y',y*1000);shape.setAttribute('width',w*1000);shape.setAttribute('height',h*1000);shape.setAttribute('rx','6');}
-  shape.setAttribute('class','photo-focus');overlay.append(shape);
-  const point=item.polygon?item.polygon[0]:item.box;
-  const number=document.createElement('span');number.className='photo-number';number.textContent=String(index+1);number.setAttribute('aria-hidden','true');number.style.left=(left+point[0]*width)+'px';number.style.top=(top+point[1]*height)+'px';wrap.append(number);
+  shape.setAttribute('class','photo-focus'+([2,3].includes(activePhoto)?' red-focus':''));overlay.append(shape);
+
  });
 };
 const oldShow=Features.showPhoto.bind(Features);

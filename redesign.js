@@ -4,8 +4,8 @@ const groups=[
  {name:'우주 반사',icon:'orbit',note:'우주에서 빛의 방향 바꾸기',ids:[0]},
  {name:'하늘 반사',icon:'cloud-sun',note:'입자와 구름으로 햇빛 돌려보내기',ids:[1,3,4]},
  {name:'지면 반사',icon:'building-2',note:'사막과 지붕을 더 밝게',ids:[2,6]},
- {name:'CO₂ 포집·저장',icon:'fan',note:'공기에서 잡아 지하에 저장하기',ids:[8]},
- {name:'바다에 철분 살포',icon:'sprout',note:'철분으로 플랑크톤 성장 돕기',ids:[10],mode:'iron'},
+ {name:'인공 나무 ‘매머드’ 설치',icon:'fan',note:'공기에서 잡아 지하에 저장하기',ids:[8]},
+ {name:'철분 살포하기',icon:'sprout',note:'철분으로 플랑크톤 성장 돕기',ids:[10],mode:'iron'},
  {name:'심층수 끌어올리기',icon:'arrow-up-from-line',note:'깊은 물의 영양분을 표층으로',ids:[10],mode:'up'}
 ];
 const originalData=Features.data.bind(Features);
@@ -22,7 +22,7 @@ Features.navigation=function(){
  }));
  $('number').textContent=(state.id<8?'태양빛 줄이기':'이산화탄소 잡기')+' - '+(current?.name||'');
  const sub=$('subtechniques');sub.hidden=!current||current.ids.length===1;
- const names={1:'성층권 입자',3:'새 구름 만들기',4:'기존 구름 밝히기',2:'사막 반사판',6:'흰 지붕'};
+ const names={1:'성층권 에어로졸 살포',3:'새 구름 만들기',4:'기존 구름 밝히기',2:'사막 반사판',6:'흰 지붕'};
  sub.replaceChildren(...(current?.ids.length>1?current.ids:[]).map(id=>{
   const b=document.createElement('button');b.type='button';b.textContent=names[id];b.setAttribute('aria-pressed',id===state.id);b.onclick=()=>select(id);return b;
  }));
@@ -72,7 +72,7 @@ LabVisuals.dac=function(a){
  path([[-4.2,.8,-.45],[-1.4,.8,-.45],[.2,1.45,-.45]],0x74aab9,'air',2);
  for(let i=0;i<Math.round(a*12);i++)ball(2.55+i%4*.25,-2.89+Math.floor(i/4)*.13,1.57,.055,0x9d63be);
  label('주변 공기의 CO₂',-3.65,1.45,.8);
- label('CO₂를 붙잡는 필터',-1.6,1.02,.5);
+ label('포집 장치',-1.6,1.02,.5);
  label('모은 CO₂를 관으로',1.6,.6,1);
  label('지하 저장층',2.8,-2.15,1.7);
 };

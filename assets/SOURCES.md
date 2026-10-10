@@ -31,3 +31,6 @@ Globe.gl (https://globe.gl/) was evaluated. A second globe renderer was not adde
 - 식물 플랑크톤의 광합성: NOAA, https://oceanservice.noaa.gov/facts/plankton.html
 - 철분 살포와 탄소 침강의 한계: WHOI, https://www.whoi.edu/ocean-learning-hub/ocean-topics/climate-weather/ocean-based-climate-solutions/iron-fertilization/
 설명은 중학생 대상의 교육용 요약이며, 인공구름 장면은 구름 형성에 유리한 조건을 가정한다. 강도와 냉각·탄소 저장량 사이의 실제 수치 관계를 예측하지 않는다.
+구름 비교 사진: NASA Earth Observatory, Ship Tracks in the Northern Pacific, Terra/MODIS, 2008-07-13. https://science.nasa.gov/earth/earth-observatory/ship-tracks-in-the-northern-pacific-20248/ . 동일 관측 사진 안의 구름 많은 영역과 구름 사이 바다를 비교하며, 실험 전후 사진이 아님.
+
+번성 색상 참고: NASA, What are Phytoplankton? https://www.naturalhazards.nasa.gov/features/Phytoplankton . 일부 석회질 껍질을 가진 종은 유백색·밝은 청록색을 만들지만 모든 플랑크톤 번성이 흰색인 것은 아님. 모형의 번성 색과 면적은 원리 관찰용으로 단순화.

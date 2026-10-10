@@ -127,3 +127,10 @@ html[lang="ko"]{word-break:keep-all;overflow-wrap:normal;line-break:auto}
  .diagram-label{max-width:135px;padding:4px 6px;font-size:12px}
  #photo-look li{font-size:13px}
 }
+
+#reading-panel #inset{position:static;width:100%;margin:18px 0 12px;box-shadow:none;font-size:13px}
+#reading-panel #inset b:before{content:''}
+#photo-annotations .red-focus{stroke:#e94038;stroke-width:3}
+#photo-look{list-style:none;padding-left:0}
+#photo-look li{list-style:none}
+#cloud-context{max-width:calc(100% - 20px)}

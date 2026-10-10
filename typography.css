@@ -149,3 +149,5 @@ html[lang="ko"]{word-break:keep-all;overflow-wrap:normal;line-break:auto}
 }
 
 .diagram-leaders line{stroke:#365d65;stroke-width:1.5;opacity:.85}.diagram-leaders circle{fill:#365d65;stroke:#fff;stroke-width:1}
+
+.diagram-label{width:max-content;box-sizing:border-box}

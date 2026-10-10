@@ -70,11 +70,11 @@ LabVisuals.dac=function(a){
   path(i<Math.round(a*3)?[[-4.25,y,.75],[-2.8,.05,.56],[-2.8,-1.04,.95],[.95,-1.04,.95],[1.15,-.2,.95],[2.35,-.2,1],[2.85,-.65,1.69],[2.85,-2.7,1.69],[3.45,-2.7,1.69]]:[[-4.25,y,.75],[-2,1.5,.7],[1.8,2,.7]],0x965bc0,'co2',1);
  }
  path([[-4.2,.8,-.45],[-1.4,.8,-.45],[.2,1.45,-.45]],0x74aab9,'air',2);
- for(let i=0;i<Math.round(a*12);i++)ball(2.55+i%4*.25,-2.89+Math.floor(i/4)*.13,1.57,.055,0x9d63be);
+ for(let i=0;i<Math.round(a*12);i++){const rock=mesh(new THREE.DodecahedronGeometry(.09),0xd8cbb7,2.55+i%4*.25,-2.89+Math.floor(i/4)*.13,1.57);rock.userData.labelName='탄소가 고정된 광물';}
  label('주변 공기의 CO₂',-3.65,1.45,.8);
  label('포집 장치',-1.6,1.02,.5);
- label('모은 CO₂를 관으로',1.6,.6,1);
- label('지하 저장층',2.8,-2.15,1.7);
+ label('CO₂를 물에 녹이기',1.15,.6,1);
+ label('현무암 속 광물로 고정',2.8,-2.15,1.7);
 };
 const oldDiagram=Features.diagram.bind(Features);
 Features.diagram=function(){

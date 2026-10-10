@@ -84,14 +84,14 @@ Features.diagram=function(){
   content+=r(0,320,w,55,'#a8b58f')+r(0,375,w,70,'#cfb88e')+r(0,445,w,75,'#a99c86');
   for(let i=0;i<3;i++){content+=r(x0+i*unit,y,unit*.78,120,i<Math.ceil(a*3)?'#548e82':'#9caead');for(let j=0;j<5;j++)content+='<path d="M'+(x0+i*unit+5)+' '+(y+17+j*21)+' h'+(unit*.78-10)+'" stroke="#dfede7" stroke-width="3"/>';}
   const collect=w*.69,well=w*.88,storage=w*.75;
-  content+=r(collect-22,205,44,95,'#c9dfd9');
+  content+=r(collect-22,205,44,95,'#c9dfd9');content+=r(collect-17,255,34,39,'#8bcbdc');
   const pipe='M'+(x0+unit*.4)+' 305 V338 H'+collect+' V260 H'+well+' V475 H'+storage;
   content+='<path d="'+pipe+'" stroke="#648c9b" stroke-width="13" fill="none" stroke-linejoin="round"/>';
   content+=flow('M'+(w*.05)+' 235 H'+x0)+flow('M'+x0+' 235 H'+(x0+unit*.4)+' V305');
   if(a)content+=flow(pipe);
   content+=flow('M'+(x0+unit*.4)+' 235 V115 H'+(w*.93));content+=text(w*.75,92,'포집되지 않은 CO₂',w*.90,115);
-  content+='<ellipse cx="'+storage+'" cy="475" rx="'+(13+a*20)+'" ry="'+(9+a*10)+'" fill="#ac88c4"/>';
-  content+=text(w*.12,277,'공기 속 CO₂')+text(w*.41,163,'포집 장치')+text(collect,185,'모은 CO₂')+text(storage,435,'지하 저장');
+  content+='<g data-storage-rock="true">';for(let i=0;i<5;i++){const rx=storage-20+i*10,ry=474+Math.sin(i)*4;content+='<path d="M'+rx+' '+(ry-8)+' l8-3 5 10 -6 8 -10-4Z" fill="'+(i<Math.round(a*5)?'#e2d7c7':'#827c77')+'" stroke="#575b58" stroke-width="1.5"/>';}content+='</g>';
+  content+=text(w*.12,277,'공기 속 CO₂')+text(w*.41,163,'포집 장치')+text(collect,185,'CO₂를 물에 녹이기')+text(storage,435,'암석 속 광물로 고정');
  }else{
   content+=r(0,270,w,200,'#e2e9e9')+r(0,470,w,50,'#719c88');
   const population=22+Math.round(a*100);
@@ -107,8 +107,8 @@ Features.diagram=function(){
    content+=text(w*.17,255,'심층수 펌프')+text(w*.16,496,'심층수의 영양분');
   }
   content+=flow('M'+(w*.62)+' 100 V258 L'+(w*.56)+' 300')+text(w*.62,84,'CO₂');
-  content+=flow('M'+(w*.53)+' 325 L'+(w*.56)+' 370','#ab8c65');for(let i=0;i<7;i++)content+='<circle cx="'+(w*.56+Math.sin(i*2.4)*7)+'" cy="'+(376+Math.cos(i*1.7)*5)+'" r="2.5" fill="#a78b68"/>';content+=flow('M'+(w*.56)+' 386 L'+(w*.61)+' 450','#ab8c65')+flow('M'+(w*.6)+' 323 Q'+(w*.89)+' 356 '+(w*.85)+' 300');
-  content+=text(w*.43,344,'식물 플랑크톤',w*.45,307)+text(w*.36,408,'사체·배설물의 응집',w*.56,376)+text(w*.55,463,'일부 유기물 입자의 침강',w*.61,450)+text(w*.84,396,'다시 순환하는 탄소',w*.85,300);
+  content+=flow('M'+(w*.53)+' 325 L'+(w*.56)+' 370','#ab8c65');for(let i=0;i<7;i++)content+='<circle cx="'+(w*.56+Math.sin(i*2.4)*7)+'" cy="'+(376+Math.cos(i*1.7)*5)+'" r="2.5" fill="#a78b68"/>';content+=flow('M'+(w*.56)+' 386 L'+(w*.61)+' 450','#ab8c65');
+  content+=text(w*.43,344,'식물 플랑크톤',w*.45,307)+text(w*.36,408,'유기물(탄소 포함)',w*.56,376)+text(w*.55,463,'일부 유기물의 침강',w*.61,450);
  }
  $('diagram').innerHTML='<svg viewBox="0 0 '+w+' '+h+'" role="img" aria-label="'+Features.data()[0]+' 원리"><defs><marker id="scene-tip" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6" fill="none" stroke="context-stroke" stroke-width="1.3"/></marker></defs><rect width="'+w+'" height="'+h+'" fill="#e8f0f3"/>'+content+'</svg>';
 };

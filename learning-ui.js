@@ -47,8 +47,8 @@ Features.layoutDiagramNames=function(){
   3:[['분무탑',150,260],...(state.compare||state.strength===0?[]:[['새 구름',415,180]])],
   4:[['분무선',145,280],['기존 해상 구름',415,180]],
   6:[['흰 지붕',255,295],['어두운 지붕',515,295]],
-  8:[['공기 속 CO₂',W*.13,235],['포집 장치',W*.28+W*.09*.39,245],['모은 CO₂',W*.69,225],['지하 저장',W*.75,475],['포집되지 않은 CO₂',W*.8,115]],
-  10:[...(state.mode==='iron'?[['철분 공급선',W*.19,255]]:[['심층수 펌프',W*.17+7,345],['심층수의 영양분',W*.14,452]]),['식물 플랑크톤',W*.45,307],['사체·배설물의 응집',W*.56,376],['일부 유기물 입자의 침강',W*.59,422],['다시 순환하는 탄소',W*.8,334]]
+  8:[['공기 속 CO₂',W*.13,235],['포집 장치',W*.28+W*.09*.39,245],['CO₂를 물에 녹이기',W*.69,225],['암석 속 광물로 고정',W*.75,475],['포집되지 않은 CO₂',W*.8,115]],
+  10:[...(state.mode==='iron'?[['철분 공급선',W*.19,255]]:[['심층수 펌프',W*.17+7,345],['심층수의 영양분',W*.14,452]]),['식물 플랑크톤',W*.45,307],['유기물(탄소 포함)',W*.56,376],['일부 유기물의 침강',W*.59,422]]
  };
  if(state.id===6){const a=(state.compare?0:state.strength)/100,n=Math.round(a*5);definitions[6]=[];if(n)definitions[6].push(['흰 지붕',255,295]);if(n<5)definitions[6].push(['어두운 지붕',255+n*65,295]);}
  svg.querySelectorAll('text').forEach(text=>{if(!['CO₂','탄소'].includes(text.textContent.trim()))text.classList.add('diagram-name');});
@@ -57,7 +57,7 @@ Features.layoutDiagramNames=function(){
   let matrix=svg.getScreenCTM();
   // Legacy diagrams scale their children on narrow screens, custom diagrams change viewBox.
   if(narrow&&![1,8,10].includes(state.id)){const child=[...svg.children].find(e=>e.hasAttribute('transform'));if(child)matrix=child.getScreenCTM();}
-  const sizes={'태양':[86,86],'지구':[120,120],'우주 반사경':[20,Math.max(10,state.strength*1.4)],'살포 비행기':[80,40],'에어로졸 입자층':[W*.34,50],'사막 반사판':[46,8],'분무탑':[60,150],'새 구름':[160,95],'기존 해상 구름':[180,105],'분무선':[110,55],'흰 지붕':[60,10],'어두운 지붕':[60,10],'포집 장치':[W*.09*.78,120],'모은 CO₂':[44,65],'지하 저장':[65,32],'심층수 펌프':[15,150],'사체·배설물의 응집':[18,16]};
+  const sizes={'태양':[86,86],'지구':[120,120],'우주 반사경':[20,Math.max(10,state.strength*1.4)],'살포 비행기':[80,40],'에어로졸 입자층':[W*.34,50],'사막 반사판':[46,8],'분무탑':[60,150],'새 구름':[160,95],'기존 해상 구름':[180,105],'분무선':[110,55],'흰 지붕':[60,10],'어두운 지붕':[60,10],'포집 장치':[W*.09*.78,120],'CO₂를 물에 녹이기':[44,95],'암석 속 광물로 고정':[65,32],'심층수 펌프':[15,150],'유기물(탄소 포함)':[18,16]};
   for(const [name,x,y] of targets){const point=new DOMPoint(x,y).matrixTransform(matrix),size=sizes[name];let bounds=null;if(size){const tl=new DOMPoint(x-size[0]/2,y-size[1]/2).matrixTransform(matrix),br=new DOMPoint(x+size[0]/2,y+size[1]/2).matrixTransform(matrix);bounds={x:tl.x-frame.x-stage.clientLeft,y:tl.y-frame.y-stage.clientTop,w:br.x-tl.x,h:br.y-tl.y};}add(name,{x:point.x-frame.x-stage.clientLeft,y:point.y-frame.y-stage.clientTop},bounds);}
  }else{
   svg.querySelectorAll('.diagram-object').forEach(g=>{const box=g.getBBox(),m=g.getScreenCTM();if(!m||!box.width&&!box.height)return;const point=new DOMPoint(box.x+box.width/2,box.y+box.height/2).matrixTransform(m);add(g.getAttribute('aria-label'),{x:point.x-frame.x,y:point.y-frame.y},null);});
@@ -65,7 +65,7 @@ Features.layoutDiagramNames=function(){
  const ns='http://www.w3.org/2000/svg',leaders=document.createElementNS(ns,'svg');
  leaders.setAttribute('viewBox','0 0 '+w+' '+h);leaders.classList.add('diagram-leaders');host.append(leaders);
  const occupied=[];
- const objectRegions=[...svg.querySelectorAll('rect,image')].filter(e=>{const b=e.getBBox();return b.width<svg.viewBox.baseVal.width*.6&&b.height>=7;}).map(e=>{const r=e.getBoundingClientRect();return {x:r.x-frame.x-stage.clientLeft,y:r.y-frame.y-stage.clientTop,w:r.width,h:r.height};});
+ const objectRegions=[...svg.querySelectorAll('rect,image,[data-plankton],[data-storage-rock],circle')].filter(e=>{const b=e.getBBox();return b.width<svg.viewBox.baseVal.width*.6&&b.height>=2;}).map(e=>{const r=e.getBoundingClientRect();return {x:r.x-frame.x-stage.clientLeft,y:r.y-frame.y-stage.clientTop,w:r.width,h:r.height};});
  const tool=$('fullscreen').getBoundingClientRect();
  if(tool.width)occupied.push({x:tool.x-frame.x-6,y:tool.y-frame.y-6,w:tool.width+12,h:tool.height+12});
  if(!$('inset').hidden){const r=$('inset').getBoundingClientRect();occupied.push({x:r.x-frame.x-8,y:r.y-frame.y-8,w:r.width+16,h:r.height+16});}
@@ -78,17 +78,18 @@ Features.layoutDiagramNames=function(){
    [bound.x-lw/2-12,a.y],[bound.x+bound.w+lw/2+12,a.y],
    [a.x,lh/2+12],[a.x,h-lh/2-12]
   ];
-  for(let y=lh/2+10;y<h-lh/2-5;y+=Math.max(lh+10,42))for(let x=lw/2+10;x<w-lw/2-5;x+=Math.max(lw+10,90))candidates.push([x,y]);
+  for(let y=lh/2+10;y<h-lh/2-5;y+=12)for(let x=lw/2+10;x<w-lw/2-5;x+=14)candidates.push([x,y]);
   let best=null,score=Infinity;
   for(let [cx,cy] of candidates){
    cx=Math.max(lw/2+7,Math.min(w-lw/2-7,cx));cy=Math.max(lh/2+7,Math.min(h-lh/2-7,cy));
    const r={x:cx-lw/2-3,y:cy-lh/2-3,w:lw+6,h:lh+6};
    const collisions=occupied.filter(q=>overlaps(q,r)).length;
    const objectOverlap=items.filter(q=>q.bounds&&overlaps(q.bounds,r)).length+objectRegions.filter(q=>overlaps(q,r)).length;
-   const cost=collisions*100000+objectOverlap*650+Math.hypot(cx-a.x,cy-a.y);
+   if(collisions||objectOverlap)continue;
+   const cost=Math.hypot(cx-a.x,cy-a.y);
    if(cost<score){score=cost;best={cx,cy,r};}
   }
-  if(!best)continue;
+  if(!best){el.remove();continue;}
   occupied.push(best.r);el.style.left=best.cx+'px';el.style.top=best.cy+'px';
   const dx=a.x-best.cx,dy=a.y-best.cy;
   const scale=Math.min(dx?lw/2/Math.abs(dx):Infinity,dy?lh/2/Math.abs(dy):Infinity,1);

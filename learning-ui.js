@@ -65,6 +65,7 @@ Features.layoutDiagramNames=function(){
  const ns='http://www.w3.org/2000/svg',leaders=document.createElementNS(ns,'svg');
  leaders.setAttribute('viewBox','0 0 '+w+' '+h);leaders.classList.add('diagram-leaders');host.append(leaders);
  const occupied=[];
+ const objectRegions=[...svg.querySelectorAll('rect,image')].filter(e=>{const b=e.getBBox();return b.width<svg.viewBox.baseVal.width*.6&&b.height>=7;}).map(e=>{const r=e.getBoundingClientRect();return {x:r.x-frame.x-stage.clientLeft,y:r.y-frame.y-stage.clientTop,w:r.width,h:r.height};});
  const tool=$('fullscreen').getBoundingClientRect();
  if(tool.width)occupied.push({x:tool.x-frame.x-6,y:tool.y-frame.y-6,w:tool.width+12,h:tool.height+12});
  if(!$('inset').hidden){const r=$('inset').getBoundingClientRect();occupied.push({x:r.x-frame.x-8,y:r.y-frame.y-8,w:r.width+16,h:r.height+16});}
@@ -83,7 +84,7 @@ Features.layoutDiagramNames=function(){
    cx=Math.max(lw/2+7,Math.min(w-lw/2-7,cx));cy=Math.max(lh/2+7,Math.min(h-lh/2-7,cy));
    const r={x:cx-lw/2-3,y:cy-lh/2-3,w:lw+6,h:lh+6};
    const collisions=occupied.filter(q=>overlaps(q,r)).length;
-   const objectOverlap=items.filter(q=>q.bounds&&overlaps(q.bounds,r)).length;
+   const objectOverlap=items.filter(q=>q.bounds&&overlaps(q.bounds,r)).length+objectRegions.filter(q=>overlaps(q,r)).length;
    const cost=collisions*100000+objectOverlap*650+Math.hypot(cx-a.x,cy-a.y);
    if(cost<score){score=cost;best={cx,cy,r};}
   }

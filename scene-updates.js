@@ -44,22 +44,18 @@ const enhance=LabVisuals.enhance.bind(LabVisuals);
 LabVisuals.enhance=function(id,a){
  enhance(id,a);
  if(id!==10)return;scene.background=new THREE.Color(0xf0f0e8);root.children.filter(m=>m.isMesh&&m.geometry.type==='BoxGeometry'&&Math.abs(m.position.y-.15)<.02).forEach(m=>{m.material.transparent=true;m.material.opacity=.1;m.material.depthWrite=false;});
- if(!this.bloomTexture){
-  const canvas=document.createElement('canvas');canvas.width=512;canvas.height=256;const ctx=canvas.getContext('2d');
-  for(let i=0;i<150;i++){
-   const radius=Math.sqrt((i+.5)/150),angle=i*2.399;
-   const x=256+Math.cos(angle)*radius*215+Math.sin(i*1.8)*12,y=128+Math.sin(angle)*radius*100;
-   const size=16+12*(.5+.5*Math.sin(i*2.1));
-   const g=ctx.createRadialGradient(x,y,0,x,y,size);
-   g.addColorStop(0,'rgba(207,249,237,.95)');g.addColorStop(.55,'rgba(84,199,192,.85)');g.addColorStop(1,'rgba(91,180,169,0)');
-   ctx.fillStyle=g;ctx.beginPath();ctx.ellipse(x,y,size,size*.6,Math.sin(i)*.8,0,Math.PI*2);ctx.fill();
-  }
-  this.bloomTexture=new THREE.CanvasTexture(canvas);this.bloomTexture.colorSpace=THREE.SRGBColorSpace;this.bloomTexture.userData.shared=true;
+ const count=70+Math.round(a*410);
+ const cells=new THREE.InstancedMesh(new THREE.SphereGeometry(1,8,6),new THREE.MeshPhongMaterial({color:0x85ddc8,emissive:0x286d60,emissiveIntensity:.22,shininess:35}),count);
+ const dummy=new THREE.Object3D(),positions=[];
+ for(let i=0;i<count;i++){
+  const x=-1.6+((i*.61803398875)%1)*5.5,z=-.95+((i*.41421356)%1)*1.9,y=-.12-((i*.7320508)%1)*.85;
+  positions.push([x,y,z]);dummy.position.set(x,y,z);dummy.scale.set(.055,.027,.035);dummy.rotation.set(i*.7,i*.9,i*.3);dummy.updateMatrix();cells.setMatrixAt(i,dummy.matrix);
  }
- const coverage=.15+a*.85;
- const surface=new THREE.Mesh(new THREE.PlaneGeometry(8.4,4),new THREE.MeshBasicMaterial({map:this.bloomTexture,transparent:true,opacity:.18+a*.78,depthWrite:false,side:THREE.DoubleSide}));
- surface.rotation.x=-Math.PI/2;surface.position.set(.1,.235,0);surface.scale.set(coverage,coverage,1);surface.material.toneMapped=false;surface.userData.labelName="표층의 플랑크톤 번성";surface.userData.bloomSurface=true;surface.userData.coverage=coverage*coverage;root.add(surface);
- dynamic.push(time=>{surface.rotation.z=Math.sin(time*.12)*.015;});
+ cells.userData.planktonPopulation=true;cells.userData.count=count;cells.userData.labelName='광합성하는 식물 플랑크톤';cells.frustumCulled=false;root.add(cells);
+ dynamic.push(t=>{positions.forEach(([x,y,z],i)=>{dummy.position.set(x+Math.sin(t*.35+i)*.018,y+Math.sin(t*.4+i)*.012,z);dummy.scale.set(.055,.027,.035);dummy.rotation.set(i*.7,i*.9+t*.05,i*.3);dummy.updateMatrix();cells.setMatrixAt(i,dummy.matrix);});cells.instanceMatrix.needsUpdate=true;});
+ const debris=new THREE.Group();debris.userData.labelName='사체·배설물이 뭉친 입자';debris.userData.organicAggregate=true;
+ for(let i=0;i<9;i++){const grain=new THREE.Mesh(new THREE.SphereGeometry(.045,7,5),new THREE.MeshPhongMaterial({color:0xb79a72}));grain.position.set(Math.sin(i*2.4)*.13,Math.cos(i*1.7)*.1,Math.sin(i)*.1);debris.add(grain);}debris.position.set(.7,-1.15,.7);root.add(debris);
+
 };
 const init=Features.init.bind(Features);
 Features.init=function(){init();this.photos[0]={name:'구름이 많은 바다와 구름 사이의 바다 비교',image:'assets/real-cloud-comparison.jpg',description:'같은 위성 사진에서 구름이 많은 밝은 부분과 구름 사이의 어두운 바다를 비교해 보세요. 긴 구름 줄은 선박 배출 입자의 영향을 받은 관측 사례이며, 해상 구름 밝히기 실험의 전후 사진은 아닙니다.',credit:'NASA Earth Observatory · Terra/MODIS, 2008년 7월 13일',url:'https://science.nasa.gov/earth/earth-observatory/ship-tracks-in-the-northern-pacific-20248/'};new ResizeObserver(()=>{if(state.id===4&&state.view==='front'&&!document.getElementById('inset').hidden)this.layoutDiagramNames();}).observe(document.getElementById('inset'));};
@@ -98,8 +94,8 @@ Features.diagram=function(){
   content+=text(w*.12,277,'공기 속 CO₂')+text(w*.41,163,'포집 장치')+text(collect,185,'모은 CO₂')+text(storage,435,'지하 저장');
  }else{
   content+=r(0,270,w,200,'#e2e9e9')+r(0,470,w,50,'#719c88');
-  const grow=.12+a*.78;
-  for(let i=0;i<8+Math.round(a*25);i++){const x=w*(.18+(i%11)*.065*grow),y=281+Math.floor(i/11)*10;content+='<ellipse cx="'+x+'" cy="'+y+'" rx="'+(10+18*a)+'" ry="5" fill="#80d8cf" opacity="'+(.3+a*.4)+'"/>';}
+  const population=22+Math.round(a*100);
+  for(let i=0;i<population;i++){const x=w*(.32+((i*.61803398875)%1)*.52),y=284+((i*.41421356)%1)*54;content+='<ellipse data-plankton="true" cx="'+x+'" cy="'+y+'" rx="3.7" ry="1.8" transform="rotate('+((i*47)%180)+' '+x+' '+y+')" fill="#399d8c" stroke="#d5f7eb" stroke-width=".7"/>';}
   if(state.mode==='iron'){
    content+='<path d="M'+w*.08+' 252 l20 18 h65 l16-18Z" fill="#5e7f8c"/>'+r(w*.14,230,35,23,'#f4f5ed');
    if(a)for(let i=0;i<7;i++)content+='<circle cx="'+(w*.28+i*4)+'" cy="'+(255+i*5)+'" r="2.5" fill="#b29453"/>';
@@ -111,8 +107,8 @@ Features.diagram=function(){
    content+=text(w*.17,255,'심층수 펌프')+text(w*.16,496,'심층수의 영양분');
   }
   content+=flow('M'+(w*.62)+' 100 V258 L'+(w*.56)+' 300')+text(w*.62,84,'CO₂');
-  content+=flow('M'+(w*.53)+' 325 L'+(w*.61)+' 450')+flow('M'+(w*.6)+' 323 Q'+(w*.89)+' 356 '+(w*.85)+' 300');
-  content+=text(w*.48,365,'식물 플랑크톤')+text(w*.55,463,'가라앉는 탄소',w*.61,450)+text(w*.84,396,'다시 순환하는 탄소',w*.85,300);
+  content+=flow('M'+(w*.53)+' 325 L'+(w*.56)+' 370','#ab8c65');for(let i=0;i<7;i++)content+='<circle cx="'+(w*.56+Math.sin(i*2.4)*7)+'" cy="'+(376+Math.cos(i*1.7)*5)+'" r="2.5" fill="#a78b68"/>';content+=flow('M'+(w*.56)+' 386 L'+(w*.61)+' 450','#ab8c65')+flow('M'+(w*.6)+' 323 Q'+(w*.89)+' 356 '+(w*.85)+' 300');
+  content+=text(w*.43,344,'식물 플랑크톤',w*.45,307)+text(w*.36,408,'사체·배설물의 응집',w*.56,376)+text(w*.55,463,'일부 유기물 입자의 침강',w*.61,450)+text(w*.84,396,'다시 순환하는 탄소',w*.85,300);
  }
  $('diagram').innerHTML='<svg viewBox="0 0 '+w+' '+h+'" role="img" aria-label="'+Features.data()[0]+' 원리"><defs><marker id="scene-tip" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6" fill="none" stroke="context-stroke" stroke-width="1.3"/></marker></defs><rect width="'+w+'" height="'+h+'" fill="#e8f0f3"/>'+content+'</svg>';
 };

@@ -20,7 +20,7 @@ Features.navigation=function(){
   b.classList.toggle('selected',g===current);b.setAttribute('aria-pressed',g===current);
   b.onclick=()=>{select(g.ids[0],g.mode||'iron');if($('navigation-dialog').open)$('navigation-dialog').close();};return b;
  }));
- $('number').textContent=(state.id<8?'태양빛 줄이기':'이산화탄소 잡기')+' - '+(current?.name||'');
+ $('number').textContent=(state.id<8?'태양빛 반사':'이산화탄소 잡기')+' - '+(current?.name||'');
  const sub=$('subtechniques');sub.hidden=!current||current.ids.length===1;
  const names={1:'성층권 에어로졸 살포',3:'새 구름 만들기',4:'기존 구름 밝히기',2:'사막 반사판',6:'흰 지붕'};
  sub.replaceChildren(...(current?.ids.length>1?current.ids:[]).map(id=>{

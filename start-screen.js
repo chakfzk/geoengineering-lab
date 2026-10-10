@@ -8,7 +8,7 @@ const choices=[
 const container=document.getElementById('start-options');
 for(let category=0;category<2;category++){
  const section=document.createElement('section');section.className='start-group';
- const heading=document.createElement('h2');heading.textContent=category===0?'태양빛 줄이기':'이산화탄소 잡기';section.append(heading);
+ const heading=document.createElement('h2');heading.textContent=category===0?'태양빛 반사':'이산화탄소 잡기';section.append(heading);
  const row=document.createElement('div');row.className='start-grid';
  choices.slice(category*3,category*3+3).forEach(([name,id,mode],index)=>{
   const button=document.createElement('button');button.type='button';button.className='start-choice';button.dataset.choice=String(category*3+index);

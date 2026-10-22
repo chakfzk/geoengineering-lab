@@ -151,3 +151,5 @@ html[lang="ko"]{word-break:keep-all;overflow-wrap:normal;line-break:auto}
 .diagram-leaders line{stroke:#365d65;stroke-width:1.5;opacity:.85}.diagram-leaders circle{fill:#365d65;stroke:#fff;stroke-width:1}
 
 .diagram-label{width:max-content;box-sizing:border-box}
+
+#photo-dialog.research-only .photo-media{display:none}#photo-dialog.research-only figure{display:block}#photo-dialog.research-only figcaption{max-width:680px;margin:auto}

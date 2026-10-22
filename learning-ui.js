@@ -136,7 +136,17 @@ Features.drawPhotoGuide=function(){
  });
 };
 const oldShow=Features.showPhoto.bind(Features);
-Features.showPhoto=function(index){activePhoto=index;oldShow(index);this.drawPhotoGuide();};
+Features.showPhoto=function(index){
+ activePhoto=index;oldShow(index);const research=index===3;
+ $('photo-dialog').classList.toggle('research-only',research);$('photo-title').textContent=research?'사막 반사판 연구 자료':'사진으로 살펴보기';
+ if(research){
+  $('photo-name').textContent='고반사 재료로 사막을 덮는 제안';
+  $('photo-description').textContent='논문에서 검토한 방법은 사막 표면을 빛을 잘 반사하는 재료로 덮어 반사율을 높이는 방식이에요. 흰색 재료뿐 아니라 알루미늄을 결합한 고반사 시트 등이 제안됐어요. 이 방법을 실제로 시공한 사진은 확인하지 못했어요.';
+  $('photo-credit').textContent='Crook 등 (2015), Journal of Geophysical Research: Atmospheres — 기후 모형 연구';
+  $('photo-source').href='https://doi.org/10.1002/2015JD023269';$('photo-source').textContent='연구 논문 보기 ↗';
+  document.querySelector('.photo-note').textContent='실제 시공 사진이 아닌 제안·모형 연구 자료입니다.';
+ }else{$('photo-source').textContent='원본과 설명 보기 ↗';this.drawPhotoGuide();}
+};
 const oldInit=Features.init.bind(Features);
 Features.init=function(){
  oldInit();$('photo-image').addEventListener('load',()=>this.drawPhotoGuide());

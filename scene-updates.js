@@ -99,7 +99,7 @@ Features.diagram=function(){
   if(state.mode==='iron'){
    content+='<path d="M'+w*.08+' 252 l20 18 h65 l16-18Z" fill="#5e7f8c"/>'+r(w*.14,230,35,23,'#f4f5ed');
    if(a)for(let i=0;i<7;i++)content+='<circle cx="'+(w*.28+i*4)+'" cy="'+(255+i*5)+'" r="2.5" fill="#b29453"/>';
-   content+=text(w*.19,221,'철분 공급');
+   content+=text(w*.28,221,'철분 공급',w*.28+12,270);
   }else{
    content+=r(w*.17,276,15,175,'#7897a4');
    for(let i=0;i<5;i++)content+='<circle cx="'+(w*.09+i*10)+'" cy="452" r="5" fill="#c9a251"/>';

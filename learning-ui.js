@@ -48,7 +48,7 @@ Features.layoutDiagramNames=function(){
   4:[['분무선',145,280],['기존 해상 구름',415,180]],
   6:[['흰 지붕',255,295],['어두운 지붕',515,295]],
   8:[['공기 속 CO₂',W*.13,235],['포집 장치',W*.28+W*.09*.39,245],['CO₂를 물에 녹이기',W*.69,225],['암석 속 광물로 고정',W*.75,475],['포집되지 않은 CO₂',W*.8,115]],
-  10:[...(state.mode==='iron'?[['철분 공급선',W*.19,255]]:[['심층수 펌프',W*.17+7,345],['심층수의 영양분',W*.14,452]]),['식물 플랑크톤',W*.45,307],['유기물(탄소 포함)',W*.56,376],['일부 유기물의 침강',W*.59,422]]
+  10:[...(state.mode==='iron'?[['철분 공급',W*.28+12,270]]:[['심층수 펌프',W*.17+7,345],['심층수의 영양분',W*.14,452]]),['식물 플랑크톤',W*.45,307],['유기물(탄소 포함)',W*.56,376],['일부 유기물의 침강',W*.59,422]]
  };
  if(state.id===6){const a=(state.compare?0:state.strength)/100,n=Math.round(a*5);definitions[6]=[];if(n)definitions[6].push(['흰 지붕',255,295]);if(n<5)definitions[6].push(['어두운 지붕',255+n*65,295]);}
  svg.querySelectorAll('text').forEach(text=>{if(!['CO₂','탄소'].includes(text.textContent.trim()))text.classList.add('diagram-name');});
@@ -59,7 +59,7 @@ Features.layoutDiagramNames=function(){
   if(narrow&&![1,8,10].includes(state.id)){const child=[...svg.children].find(e=>e.hasAttribute('transform'));if(child)matrix=child.getScreenCTM();}
   const sizes={'태양':[86,86],'지구':[120,120],'우주 반사경':[20,Math.max(10,state.strength*1.4)],'살포 비행기':[80,40],'에어로졸 입자층':[W*.34,50],'사막 반사판':[46,8],'분무탑':[60,150],'새 구름':[160,95],'기존 해상 구름':[180,105],'분무선':[110,55],'흰 지붕':[60,10],'어두운 지붕':[60,10],'포집 장치':[W*.09*.78,120],'CO₂를 물에 녹이기':[44,95],'암석 속 광물로 고정':[65,32],'심층수 펌프':[15,150],'유기물(탄소 포함)':[18,16]};
   for(const [name,x,y] of targets){const point=new DOMPoint(x,y).matrixTransform(matrix),size=sizes[name];let bounds=null;if(size){const tl=new DOMPoint(x-size[0]/2,y-size[1]/2).matrixTransform(matrix),br=new DOMPoint(x+size[0]/2,y+size[1]/2).matrixTransform(matrix);bounds={x:tl.x-frame.x-stage.clientLeft,y:tl.y-frame.y-stage.clientTop,w:br.x-tl.x,h:br.y-tl.y};}add(name,{x:point.x-frame.x-stage.clientLeft,y:point.y-frame.y-stage.clientTop},bounds);
-   const preferred=state.id===0&&name==='우주 반사경'?[358,390]:state.id===10&&name==='유기물(탄소 포함)'?[W*.32,388]:state.id===10&&name==='일부 유기물의 침강'?[W*.81,430]:null;
+   const preferred=state.id===10&&name==='철분 공급'?[W*.28,210]:state.id===0&&name==='우주 반사경'?[358,390]:state.id===10&&name==='유기물(탄소 포함)'?[W*.32,388]:state.id===10&&name==='일부 유기물의 침강'?[W*.81,430]:null;
    if(preferred){const q=new DOMPoint(...preferred).matrixTransform(matrix);items.at(-1).preferred={x:q.x-frame.x-stage.clientLeft,y:q.y-frame.y-stage.clientTop};}}
  }else{
   svg.querySelectorAll('.diagram-object').forEach(g=>{const box=g.getBBox(),m=g.getScreenCTM();if(!m||!box.width&&!box.height)return;const point=new DOMPoint(box.x+box.width/2,box.y+box.height/2).matrixTransform(m);add(g.getAttribute('aria-label'),{x:point.x-frame.x,y:point.y-frame.y},null);});

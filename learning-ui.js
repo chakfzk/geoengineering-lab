@@ -59,7 +59,7 @@ Features.layoutDiagramNames=function(){
   if(narrow&&![1,8,10].includes(state.id)){const child=[...svg.children].find(e=>e.hasAttribute('transform'));if(child)matrix=child.getScreenCTM();}
   const sizes={'태양':[86,86],'지구':[120,120],'우주 반사경':[20,Math.max(10,state.strength*1.4)],'살포 비행기':[80,40],'에어로졸 입자층':[W*.34,50],'사막 반사판':[46,8],'분무탑':[60,150],'새 구름':[160,95],'기존 해상 구름':[180,105],'분무선':[110,55],'흰 지붕':[60,10],'어두운 지붕':[60,10],'포집 장치':[W*.09*.78,120],'CO₂를 물에 녹이기':[44,95],'암석 속 광물로 고정':[65,32],'심층수 펌프':[15,150],'유기물(탄소 포함)':[18,16]};
   for(const [name,x,y] of targets){const point=new DOMPoint(x,y).matrixTransform(matrix),size=sizes[name];let bounds=null;if(size){const tl=new DOMPoint(x-size[0]/2,y-size[1]/2).matrixTransform(matrix),br=new DOMPoint(x+size[0]/2,y+size[1]/2).matrixTransform(matrix);bounds={x:tl.x-frame.x-stage.clientLeft,y:tl.y-frame.y-stage.clientTop,w:br.x-tl.x,h:br.y-tl.y};}add(name,{x:point.x-frame.x-stage.clientLeft,y:point.y-frame.y-stage.clientTop},bounds);
-   const preferred=state.id===10&&name==='철분 공급'?[W*.28,210]:state.id===0&&name==='우주 반사경'?[358,390]:state.id===10&&name==='유기물(탄소 포함)'?[W*.32,388]:state.id===10&&name==='일부 유기물의 침강'?[W*.81,430]:null;
+   const preferred=state.id===10&&name==='심층수의 영양분(질소와 인)'?[W*.22,490]:state.id===10&&name==='철분 공급'?[W*.28,210]:state.id===0&&name==='우주 반사경'?[358,390]:state.id===10&&name==='유기물(탄소 포함)'?[W*.32,388]:state.id===10&&name==='일부 유기물의 침강'?[W*.81,430]:null;
    if(preferred){const q=new DOMPoint(...preferred).matrixTransform(matrix);items.at(-1).preferred={x:q.x-frame.x-stage.clientLeft,y:q.y-frame.y-stage.clientTop};}}
  }else{
   svg.querySelectorAll('.diagram-object').forEach(g=>{const box=g.getBBox(),m=g.getScreenCTM();if(!m||!box.width&&!box.height)return;const point=new DOMPoint(box.x+box.width/2,box.y+box.height/2).matrixTransform(m);add(g.getAttribute('aria-label'),{x:point.x-frame.x,y:point.y-frame.y},null);});
@@ -72,7 +72,7 @@ Features.layoutDiagramNames=function(){
  if(tool.width)occupied.push({x:tool.x-frame.x-6,y:tool.y-frame.y-6,w:tool.width+12,h:tool.height+12});
  if(!$('inset').hidden){const r=$('inset').getBoundingClientRect();occupied.push({x:r.x-frame.x-8,y:r.y-frame.y-8,w:r.width+16,h:r.height+16});}
  for(const item of items){
-  const el=document.createElement('span');el.className='diagram-label';el.textContent=item.name;host.append(el);
+  const el=document.createElement('span');el.className='diagram-label';el.textContent=item.name;if(item.name==='심층수의 영양분(질소와 인)'){const detail=document.createElement('span');detail.textContent='(질소와 인)';detail.style.display='block';el.replaceChildren(document.createTextNode('심층수의 영양분'),detail);}host.append(el);
   const lw=el.offsetWidth,lh=el.offsetHeight,a=item.anchor;
   const bound=item.bounds||{x:a.x,y:a.y,w:0,h:0};
   const candidates=[

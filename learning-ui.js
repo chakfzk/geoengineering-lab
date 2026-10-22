@@ -25,7 +25,7 @@ const shortNames={
  '햇빛을 반사하는 흰 지붕':'흰 지붕',
  '깊이 가라앉는 탄소':'가라앉는 탄소',
  '공기에서 잡는 필터':'포집 장치',
- '깊은 바다의 영양분':'심층수의 영양분'
+ '깊은 바다의 영양분':'심층수의 영양분(질소와 인)'
 };
 const overlaps=(a,b)=>a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;
 Features.layoutDiagramNames=function(){
@@ -48,7 +48,7 @@ Features.layoutDiagramNames=function(){
   4:[['분무선',145,280],['기존 해상 구름',415,180]],
   6:[['흰 지붕',255,295],['어두운 지붕',515,295]],
   8:[['공기 속 CO₂',W*.13,235],['포집 장치',W*.28+W*.09*.39,245],['CO₂를 물에 녹이기',W*.69,225],['암석 속 광물로 고정',W*.75,475],['포집되지 않은 CO₂',W*.8,115]],
-  10:[...(state.mode==='iron'?[['철분 공급',W*.28+12,270]]:[['심층수 펌프',W*.17+7,345],['심층수의 영양분',W*.14,452]]),['식물 플랑크톤',W*.45,307],['유기물(탄소 포함)',W*.56,376],['일부 유기물의 침강',W*.59,422]]
+  10:[...(state.mode==='iron'?[['철분 공급',W*.28+12,270]]:[['심층수 펌프',W*.17+7,345],['심층수의 영양분(질소와 인)',W*.14,452]]),['식물 플랑크톤',W*.45,307],['유기물(탄소 포함)',W*.56,376],['일부 유기물의 침강',W*.59,422]]
  };
  if(state.id===6){const a=(state.compare?0:state.strength)/100,n=Math.round(a*5);definitions[6]=[];if(n)definitions[6].push(['흰 지붕',255,295]);if(n<5)definitions[6].push(['어두운 지붕',255+n*65,295]);}
  svg.querySelectorAll('text').forEach(text=>{if(!['CO₂','탄소'].includes(text.textContent.trim()))text.classList.add('diagram-name');});

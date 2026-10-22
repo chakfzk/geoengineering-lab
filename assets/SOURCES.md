@@ -40,3 +40,5 @@ Mammoth storage principle: captured CO₂ is dissolved in water and injected int
 
 
 2026-10-22: Desert solar-glint photo removed from the exhibit: it does not document high-albedo desert covering. Research reference: https://doi.org/10.1002/2015JD023269 . Mineralization mechanism: https://www.nature.com/articles/s41467-019-10003-8 and https://www.carbfix.com/operations .
+
+Artificial upwelling transports water, inorganic nutrients, organic carbon and dissolved inorganic carbon: https://www.ncbi.nlm.nih.gov/books/NBK580046/ . Nutrients are dissolved nitrogen/phosphorus compounds; sinking organic matter is a separate biological export process.

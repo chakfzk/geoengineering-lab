@@ -104,7 +104,7 @@ Features.diagram=function(){
    content+=r(w*.17,276,15,175,'#7897a4');
    for(let i=0;i<5;i++)content+='<circle cx="'+(w*.09+i*10)+'" cy="452" r="5" fill="#c9a251"/>';
    if(a)content+=flow('M'+(w*.17+7)+' 447 V285 H'+(w*.35),'#b8984a');
-   content+=text(w*.17,255,'심층수 펌프')+text(w*.16,496,'심층수의 영양분');
+   content+=text(w*.17,255,'심층수 펌프')+text(w*.16,496,'심층수의 영양분(질소와 인)');
   }
   content+=flow('M'+(w*.62)+' 100 V258 L'+(w*.56)+' 300')+text(w*.62,84,'CO₂');
   content+=flow('M'+(w*.53)+' 325 L'+(w*.56)+' 370','#ab8c65');for(let i=0;i<7;i++)content+='<circle cx="'+(w*.56+Math.sin(i*2.4)*7)+'" cy="'+(376+Math.cos(i*1.7)*5)+'" r="2.5" fill="#a78b68"/>';content+=flow('M'+(w*.56)+' 386 L'+(w*.61)+' 450','#ab8c65');
